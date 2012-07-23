@@ -55,6 +55,7 @@ jQuery Snap Scroll Plugin
           scrollPos, // x pos of scroll element
           savedPos,  // x pos of scroll element before page scroll
           currentTouch,
+          isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1,
 
 
           /* Get the position to snap to
@@ -62,7 +63,7 @@ jQuery Snap Scroll Plugin
           snapPos = function() {
             // Determine what it's closest to
             var offset = $this.offset().left,
-                left   = Math.abs(offset) // if greater than `buffer` in either direction, snap
+                left   = Math.abs(offset); // if greater than `buffer` in either direction, snap
 
             // Determine where to snap to based on what direction the container was scrolled
             // in and where it was last.
@@ -113,13 +114,18 @@ jQuery Snap Scroll Plugin
         },
 
         // Drag movement
-        touchmove: function() {
+        touchmove: function(e) {
+
+          // Android doesn't support multitouch, so we need to do this
+          // so it doesn't break
+          if (isAndroid) {
+            currentTouch = e.originalEvent.touches[0];
+          }
           var diff = currentTouch.pageX - mousePos,
               left = scrollPos + diff;
 
           // At the left or right end? Slow down the movement
           if (left > 0 || left < -(options.width * (options.steps - 1) - options.space)) left = Math.round(scrollPos + diff / 3);
-
           $this.css('left', left + 'px');
 
           // Don't allow the page to scroll if we've moved the scrollable element a certain distance.
