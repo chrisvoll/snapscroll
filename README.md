@@ -14,11 +14,13 @@ This attempts to duplicate the functionality of the iPhone App Store's horizonta
 
 The only thing you really need is jQuery. This includes the animation easing functions from jQuery UI, but if you're already using that, you can remove them from snapScroll.js.
 
+
 ## Usage
 
 ``` javascript
 $(object).snapScroll({ options });
 ```
+
 
 ## Options
 
@@ -32,6 +34,15 @@ $(object).snapScroll({ options });
 - **buffer:** escape buffer. e.g., if this is 20, the user has to move the element 20px before it will snap to the next page, or will snap back to where it was
 - **easing:** easing function. SnapScroll includes the basic easeOut animations from jQuery UI since those are the smoothest to use for this, but you can include jQuery UI if you want the others
 - **flush:** ensure that the scrollable element always remains flush with the edge of the window. If this is enabled, scrolling to the end will show part of the previous page on the left
+
+
+## Browser Support
+
+This has been tested and is known to work on these browsers:
+
+- iOS 6b3 Mobile Safari
+- Android something or other
+
 
 ## Bugs
 

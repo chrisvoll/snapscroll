@@ -12,14 +12,14 @@
         overflow-y: auto;
       }
       .scrollable {
-        width: 1740px;       /* width * steps + (window width - step width) */
+        width: 1710px;       /* width * steps + (window width - step width) */
         white-space: nowrap; /* needed for android */
         position: relative;  /* absolute or relative */
         left: 0;
         padding: 40px 0;
       }
       .div {
-        width: 289px;
+        width: 284px;
         height: 7px;
         margin: 8px 1px 0 0;
         background: #d5717d;
@@ -27,6 +27,41 @@
       }
       .green { background: #6dda54; }
       .blue  { background: #61abda; }
+
+      .apps {
+        background: #EBEBEB;
+      }
+      .app {
+        width: 85px;
+        float: left;
+        margin: 0 0 0 10px;
+        text-shadow: 0 1px 0 #FFF;
+        font-size: 10px;
+      }
+      .app .icon {
+        width: 72px;
+        height: 72px;
+        background: #FFF;
+        margin: 0 0 10px;
+        -webkit-border-radius: 10px;
+           -moz-border-radius: 10px;
+                border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .3), 0 2px 2px rgba(0, 0, 0, .2);
+           -moz-box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .3), 0 2px 2px rgba(0, 0, 0, .2);
+                box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .3), 0 2px 2px rgba(0, 0, 0, .2);
+      }
+      .app .name {
+        font-size: 11px;
+        font-weight: bold;
+        color: #646464;
+      }
+      .app .category {
+        color: #646464;
+      }
+      .app .price {
+        font-weight: bold;
+        color: #B1B1B1;
+      }
     </style>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="./snapScroll.js"></script>
@@ -46,14 +81,121 @@
       <div class="div blue"></div>
     </div>
 
-    <div class="scrollable">
-      Scroll sideways! This is a demo that replicates some of the functionality of the iOS App Store horizontal scrolling sections, which snap into place. Works on both iPhone and Android browsers.<br/>
-      <div class="div"></div>
-      <div class="div green"></div>
-      <div class="div blue"></div>
-      <div class="div"></div>
-      <div class="div green"></div>
-      <div class="div blue"></div>
+    <div class="scrollable apps">
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">Vyclone</div>
+        <div class="category">Photo &amp; Video</div>
+        <div class="price">FREE</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">The Dark Knig...</div>
+        <div class="category">Music</div>
+        <div class="price">FREE</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">The Dark Knig...</div>
+        <div class="category">Games: Advent...</div>
+        <div class="price">$6.99</div>
+      </div>
+
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">Osmos</div>
+        <div class="category">Games</div>
+        <div class="price">$2.99</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      <div class="app">
+        <div class="icon"></div>
+        <div class="name">App name</div>
+        <div class="category">Category</div>
+        <div class="price">Price</div>
+      </div>
+      <br style="clear: both;"/>
     </div>
 
     <div class="scrollable">

@@ -27,20 +27,20 @@ jQuery Snap Scroll Plugin
 
       // Snap width. Can (and should) be smaller than the window width, which will display
       // a part of the next page. Steps = the number of pages.
-      width: $(window).width() - 30,
+      width: $(window).width() - 35,
       steps: 6,
 
       // Extra space at the edge of the page. Should be window.width - step.width
-      space: 30,
+      space: 35,
 
       // Speed of the snapping animation
-      speed: 300,
+      speed: 500,
 
       // Escape buffer. e.g., move 20px before moving to the next page
       buffer: 20,
 
       // Animation easing through jQuery (see below for included functions)
-      easing: 'easeOutQuart',
+      easing: 'easeOutQuint',
 
       // Keep the pages flush with the edge of the window when you scroll to the last page.
       // If false, the left side will always be flush.
