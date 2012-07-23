@@ -28,16 +28,21 @@ jQuery Snap Scroll Plugin
       // Snap width. Can (and should) be smaller than the window width, which will display
       // a part of the next page. Steps = the number of pages.
       pageWidth: $(window).width() - 35,
+
+      // Number of pages you have in the element
       pageCount: 6,
 
       // Extra space at the edge of the page. Should be window.width - step.width
       pageSpace: 35,
 
       // Speed of the snapping animation
-      speed: 400,
+      speed: 300,
 
       // Escape buffer. e.g., move 20px before moving to the next page
       buffer: 20,
+
+      // Easing. Check the functions included below, or use the ones from jQuery UI.
+      easing: 'easeOutCubic',
 
       // Keep the pages flush with the edge of the window when you scroll to the last page
       flush: true
@@ -46,10 +51,12 @@ jQuery Snap Scroll Plugin
 
     this.each(function() {
       var $this = $(this),
-          current = 0,
+          currentSnap = 0, // the last snap point
+          currentpx   = 0, // actual location
+          animating, // Set to false to interrupt the animation
           touchPos,  // x pos of finger
           scrollPos, // x pos of scroll element
-          currentTouch,
+          currentTouch, // event touch object. persistent on iOS, breaks on Android
           isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1,
 
 
@@ -60,31 +67,53 @@ jQuery Snap Scroll Plugin
             var offset = $this.offset().left,
                 left = Math.abs(offset); // snap if greater than buffer
 
-            // Determine where to snap to based on what direction the container was scrolled
-            // in and where it was last.
-            if (left >= current + options.buffer && (current / options.pageWidth) < (options.pageCount - 1) && offset < 0) {
-              // Snap right
-              return current + options.pageWidth;
-            }
-            else if (left <= current - options.buffer) {
-              // Snap left
-              return current - options.pageWidth;
-            }
-            else {
-              // Return to original position
-              return current;
-            }
+            // Snap back if we're within the buffer or past the beginning
+            var reset = Math.abs(left - currentSnap) < options.buffer || offset > 0;
+
+            return reset
+                   ? currentSnap // reset
+                   : left >= currentSnap + options.buffer
+                           ? currentSnap + options.pageWidth  // right
+                           : currentSnap - options.pageWidth; // left
           },
 
-          // Credit for the idea to use 3D transforms goes to
-          // http://untyped.com/untyping/2011/01/24/smooth-scrolling-for-mobile-safari/
+
+          /* Move the scrollable element to a certain point
+           *
+           * Credit for the idea to use 3D transforms goes to:
+           * http://untyped.com/untyping/2011/01/24/smooth-scrolling-for-mobile-safari/
+           *
+           * However, we can't use CSS3 animations because we can't gracefully degrade
+           * them in older mobile browsers, and you can't interrupt them properly since
+           * you can't get the current animation position (which is problematic because
+           * of the easing).
+          ****************************************************************************/
           scrollTo = function(pos, speed) {
-            $this.css({
-              '-webkit-transition': '-webkit-transform ' + speed + 'ms',
-              '-webkit-transform': 'translate3d(' + pos + 'px, 0, 0)'
+            currentpx = pos;
+            $this.css('-webkit-transform', 'translate3d(' + pos + 'px, 0, 0)');
+          },
+
+
+          /* Animate the scrolling
+           *
+           * translate3d can't be animated through jQuery, so animate the numbers
+           * instead. Canceled by switching `animating` to false.
+          ****************************************************************************/
+          animateScrollTo = function(start, end) {
+            animating = true;
+
+            $({ n: start }).animate({ n: -end }, {
+              step: function(n) {
+                if (!animating) return false;
+                scrollTo(n);
+              },
+              easing: options.easing,
+              duration: options.speed
             });
           };
 
+      // Initialize the translate3d which causes the element to flicker. Shouldn't
+      // be a problem if we do it as the page loads
       scrollTo(0, 0);
 
 
@@ -111,10 +140,10 @@ jQuery Snap Scroll Plugin
             if (snap > options.pageWidth * (options.pageCount - 1) - options.pageSpace) snap = options.pageWidth * (options.pageCount - 1) - options.pageSpace;
             if (snap < 0) snap = 0;
           }
+          currentSnap = snap;
 
           // Animate to the position
-          current = snap;
-          scrollTo(snap * -1, options.speed);
+          animateScrollTo(currentpx, snap);
         },
 
         // Drag movement
@@ -131,8 +160,31 @@ jQuery Snap Scroll Plugin
           if (left > 0 || left < -(options.pageWidth * (options.pageCount - 1) - options.pageSpace)) left = scrollPos + diff / 3;
 
           scrollTo(left, 0);
+          animating = false;
+
+          // If we move a certain distance, don't allow scrolling the window.
+          // This isn't completely necessary, but makes the interaction feel more
+          // solid. Otherwise, the hardware accelerated element can be scrolled at
+          // the same time as the rest of the page on iOS.
+          if (Math.abs(diff) > 10) return false;
         }
       });
     });
   };
 })(jQuery);
+
+/* Duplicate of the basic easeOut functions in jQuery UI. Feel
+ * free to remove these if you have jQuery UI included.
+ *************************************************************/
+if (typeof jQuery.ui === 'undefined') {
+  jQuery.extend(jQuery.easing, {
+    easeOutQuad:  function (a, b, c, d, e) { return -d * (b /= e) * (b - 2) + c },
+    easeOutCubic: function (a, b, c, d, e) { return  d * ((b = b / e - 1) * b * b + 1) + c },
+    easeOutQuart: function (a, b, c, d, e) { return -d * ((b = b / e - 1) * b * b * b - 1) + c },
+    easeOutQuint: function (a, b, c, d, e) { return  d * ((b = b / e - 1) * b * b * b * b + 1) + c },
+    easeOutSine:  function (a, b, c, d, e) { return d * Math.sin(b / e * (Math.PI / 2)) + c },
+    easeOutExpo:  function (a, b, c, d, e) { return b == e ? c + d : d * (-Math.pow(2, - 10 * b / e) + 1) + c },
+    easeOutCirc:  function (a, b, c, d, e) { return d * Math.sqrt(1 - (b = b / e - 1) * b) + c },
+    easeOutBack:  function (a, c, d, e, f, g) { return g == b && (g = 1.70158), e * ((c = c / f - 1) * c * ((g + 1) * c + g) + 1) + d }
+  });
+}
