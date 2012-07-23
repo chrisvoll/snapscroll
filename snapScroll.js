@@ -12,7 +12,7 @@ jQuery Snap Scroll Plugin
 
   Scrollable element should have this CSS:
 
-    width: number of steps * width of those steps;
+    width: number of pages * width of those pages;
     position: relative;
     left: 0;
     white-space: nowrap;
@@ -27,23 +27,19 @@ jQuery Snap Scroll Plugin
 
       // Snap width. Can (and should) be smaller than the window width, which will display
       // a part of the next page. Steps = the number of pages.
-      width: $(window).width() - 35,
-      steps: 6,
+      pageWidth: $(window).width() - 35,
+      pageCount: 6,
 
       // Extra space at the edge of the page. Should be window.width - step.width
-      space: 35,
+      pageSpace: 35,
 
       // Speed of the snapping animation
-      speed: 500,
+      speed: 400,
 
       // Escape buffer. e.g., move 20px before moving to the next page
       buffer: 20,
 
-      // Animation easing through jQuery (see below for included functions)
-      easing: 'easeOutQuint',
-
-      // Keep the pages flush with the edge of the window when you scroll to the last page.
-      // If false, the left side will always be flush.
+      // Keep the pages flush with the edge of the window when you scroll to the last page
       flush: true
 
     }, (arguments[0] || {}));
@@ -51,9 +47,8 @@ jQuery Snap Scroll Plugin
     this.each(function() {
       var $this = $(this),
           current = 0,
-          mousePos,  // x pos of mouse
+          touchPos,  // x pos of finger
           scrollPos, // x pos of scroll element
-          savedPos,  // x pos of scroll element before page scroll
           currentTouch,
           isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1,
 
@@ -63,23 +58,34 @@ jQuery Snap Scroll Plugin
           snapPos = function() {
             // Determine what it's closest to
             var offset = $this.offset().left,
-                left   = Math.abs(offset); // if greater than `buffer` in either direction, snap
+                left = Math.abs(offset); // snap if greater than buffer
 
             // Determine where to snap to based on what direction the container was scrolled
             // in and where it was last.
-            if (left >= current + options.buffer && (current / options.width) < (options.steps - 1) && offset < 0) {
-              // snap right if the position is beyond the right buffer and not at the end
-              return current + options.width;
+            if (left >= current + options.buffer && (current / options.pageWidth) < (options.pageCount - 1) && offset < 0) {
+              // Snap right
+              return current + options.pageWidth;
             }
             else if (left <= current - options.buffer) {
-              // snap left
-              return current - options.width;
+              // Snap left
+              return current - options.pageWidth;
             }
             else {
-              // snap back, up on tha flo'
+              // Return to original position
               return current;
             }
+          },
+
+          // Credit for the idea to use 3D transforms goes to
+          // http://untyped.com/untyping/2011/01/24/smooth-scrolling-for-mobile-safari/
+          scrollTo = function(pos, speed) {
+            $this.css({
+              '-webkit-transition': '-webkit-transform ' + speed + 'ms',
+              '-webkit-transform': 'translate3d(' + pos + 'px, 0, 0)'
+            });
           };
+
+      scrollTo(0, 0);
 
 
       /* Event listeners for the scrollable element
@@ -89,10 +95,10 @@ jQuery Snap Scroll Plugin
         // Scrolling started
         touchstart: function(e) {
           // Cache the touch so we can support true multitouch
+          // Not supported on Android, which is addressed in touchmove
           currentTouch = e.originalEvent.touches[e.originalEvent.touches.length - 1];
 
-          $this.stop();
-          mousePos = currentTouch.pageX;
+          touchPos = currentTouch.pageX;
           scrollPos = $this.offset().left;
         },
 
@@ -102,15 +108,13 @@ jQuery Snap Scroll Plugin
 
           // Make sure the left and right ends are flush with the window
           if (options.flush) {
-            if (snap > options.width * (options.steps - 1) - options.space) snap = options.width * (options.steps - 1) - options.space;
+            if (snap > options.pageWidth * (options.pageCount - 1) - options.pageSpace) snap = options.pageWidth * (options.pageCount - 1) - options.pageSpace;
             if (snap < 0) snap = 0;
           }
 
           // Animate to the position
-          setTimeout(function() {
-            current = snap;
-            $this.stop().animate({ left: snap * -1 + 'px' }, options.speed, options.easing);
-          }, 0);
+          current = snap;
+          scrollTo(snap * -1, options.speed);
         },
 
         // Drag movement
@@ -118,49 +122,17 @@ jQuery Snap Scroll Plugin
 
           // Android doesn't support multitouch, so we need to do this
           // so it doesn't break
-          if (isAndroid) {
-            currentTouch = e.originalEvent.touches[0];
-          }
-          var diff = currentTouch.pageX - mousePos,
+          if (isAndroid) currentTouch = e.originalEvent.touches[0];
+
+          var diff = currentTouch.pageX - touchPos,
               left = scrollPos + diff;
 
           // At the left or right end? Slow down the movement
-          if (left > 0 || left < -(options.width * (options.steps - 1) - options.space)) left = Math.round(scrollPos + diff / 3);
-          $this.css('left', left + 'px');
+          if (left > 0 || left < -(options.pageWidth * (options.pageCount - 1) - options.pageSpace)) left = scrollPos + diff / 3;
 
-          // Don't allow the page to scroll if we've moved the scrollable element a certain distance.
-          // The heigher this number is, the easier it is to scroll vertically (though harder horizontally).
-          if (Math.abs(diff) > 10) { return false; }
+          scrollTo(left, 0);
         }
-      });
-
-
-      /* Fix for issue where the position jumps after a scroll:
-       * Save the x position on each touchstart so we can return to it if a scroll is fired.
-       *
-       * TODO: Find a way to make this suck less, because `scroll` isn't fired into long after
-       *       it screws up the position.
-       ************************************************/
-      $(window).on({
-        touchstart: function() { savedPos = $this.css('left'); },
-        scroll:     function() { $this.css('left', savedPos);  }
       });
     });
   };
 })(jQuery);
-
-/* Duplicate of the basic easeOut functions in jQuery UI. Feel
- * free to remove these if you have jQuery UI included.
- *************************************************************/
-if (typeof jQuery.ui === 'undefined') {
-  jQuery.extend(jQuery.easing, {
-    easeOutQuad:  function (a, b, c, d, e) { return -d * (b /= e) * (b - 2) + c },
-    easeOutCubic: function (a, b, c, d, e) { return  d * ((b = b / e - 1) * b * b + 1) + c },
-    easeOutQuart: function (a, b, c, d, e) { return -d * ((b = b / e - 1) * b * b * b - 1) + c },
-    easeOutQuint: function (a, b, c, d, e) { return  d * ((b = b / e - 1) * b * b * b * b + 1) + c },
-    easeOutSine:  function (a, b, c, d, e) { return d * Math.sin(b / e * (Math.PI / 2)) + c },
-    easeOutExpo:  function (a, b, c, d, e) { return b == e ? c + d : d * (-Math.pow(2, - 10 * b / e) + 1) + c },
-    easeOutCirc:  function (a, b, c, d, e) { return d * Math.sqrt(1 - (b = b / e - 1) * b) + c },
-    easeOutBack:  function (a, c, d, e, f, g) { return g == b && (g = 1.70158), e * ((c = c / f - 1) * c * ((g + 1) * c + g) + 1) + d }
-  });
-}
