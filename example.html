@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SeatGeek Mobile Scroll Concept</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <style type="text/css">
+      body, html {
+        width: 100%;
+        margin: 0;
+        font: normal 10px Helvetica, Arial, sans-serif;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+      .scrollable {
+        width: 1740px;       /* width * steps + (window width - step width) */
+        white-space: nowrap; /* needed for android */
+        position: relative;  /* absolute or relative */
+        left: 0;
+        padding: 40px 0;
+      }
+      .div {
+        width: 289px;
+        height: 7px;
+        margin: 8px 1px 0 0;
+        background: #d5717d;
+        float: left;
+      }
+      .green { background: #6dda54; }
+      .blue  { background: #61abda; }
+    </style>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="./snapScroll.js"></script>
+    <script type="text/javascript">
+      $(function() { $('.scrollable').snapScroll(); });
+    </script>
+  </head>
+  <body>
+
+    <div class="scrollable">
+      Scroll sideways! This is a demo that replicates some of the functionality of the iOS App Store horizontal scrolling sections, which snap into place. Works on both iPhone and Android browsers.<br/>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+    </div>
+
+    <div class="scrollable">
+      Scroll sideways! This is a demo that replicates some of the functionality of the iOS App Store horizontal scrolling sections, which snap into place. Works on both iPhone and Android browsers.<br/>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+    </div>
+
+    <div class="scrollable">
+      Scroll sideways! This is a demo that replicates some of the functionality of the iOS App Store horizontal scrolling sections, which snap into place. Works on both iPhone and Android browsers.<br/>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+    </div>
+
+    <div class="scrollable">
+      Scroll sideways! This is a demo that replicates some of the functionality of the iOS App Store horizontal scrolling sections, which snap into place. Works on both iPhone and Android browsers.<br/>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+    </div>
+
+    <div class="scrollable">
+      Scroll sideways! This is a demo that replicates some of the functionality of the iOS App Store horizontal scrolling sections, which snap into place. Works on both iPhone and Android browsers.<br/>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+    </div>
+
+    <div class="scrollable">
+      Scroll sideways! This is a demo that replicates some of the functionality of the iOS App Store horizontal scrolling sections, which snap into place. Works on both iPhone and Android browsers.<br/>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+      <div class="div"></div>
+      <div class="div green"></div>
+      <div class="div blue"></div>
+    </div>
+
+  </body>
+</html>
